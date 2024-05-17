@@ -1,0 +1,3 @@
+/Users/mac/CLionProjects/Androshchuk-Iryna-Programming-Paradigms-Assignment/cmake-build-debug/CMakeFiles/Androshchuk_Iryna_Programming_Paradigms_Assignment.dir
+/Users/mac/CLionProjects/Androshchuk-Iryna-Programming-Paradigms-Assignment/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/mac/CLionProjects/Androshchuk-Iryna-Programming-Paradigms-Assignment/cmake-build-debug/CMakeFiles/rebuild_cache.dir
