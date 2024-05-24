@@ -10,37 +10,44 @@ void print_help() {
   printf("7 - Text search \n");
   printf("8 - Clear console \n");
 }
+
 void append_text() {
-  printf("Todo");
+  printf("Todo\n");
 }
+
 void start_new_line() {
-  printf("Todo");
+  printf("Todo\n");
 }
+
 void save() {
-  printf("Todo");
+  printf("Todo \n");
 }
+
 void load() {
   printf("Todo");
 }
+
 void print_text() {
   printf("Todo");
 }
+
 void Insert_at_certain_position() {
   printf("Todo");
 }
+
 void search() {
   printf("Todo");
 }
+
 void clear() {
   printf("Todo");
 }
 
 int main( ) {
-
   int command = 0;
 
-  while (1) {
-    print_help( );
+  while (true) {
+    printf(" If you need help print 0\n");
     printf("Chose the comand");
     scanf("%d", &command);
     getchar();
@@ -69,6 +76,12 @@ int main( ) {
         break;
       case 8:
         clear();
+        break;
+      case 0:
+        print_help();
+        break;
+      default:
+        printf("Please, enter the command\n");
         break;
     }
   }
