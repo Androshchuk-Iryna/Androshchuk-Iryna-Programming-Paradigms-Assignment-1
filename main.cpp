@@ -53,7 +53,23 @@ void start_new_line() {
 }
 
 void save() {
-  printf("Todo \n");
+  printf("Enter file name to save:");
+  char filename[256];
+  fgets(filename, 256, stdin);
+  filename[strcspn(filename,"\n")] = '\0'; //replace \n with \0
+
+  FILE* file;
+  file =fopen (filename, "w");
+  if (file == NULL) {
+    printf("Can not write to this file \n");
+    return;
+  }
+  for (int i = 0; i < numrows; i++) {
+    fprintf(file, "%.*s\n", text[i].size, text[i].chars);
+  }
+  fclose(file);
+  printf("Text saved to %s \n", filename);
+
 }
 
 void load() {
@@ -83,7 +99,7 @@ int main( ) {
 
   while (true) {
     printf(" If you need help print 0\n");
-    printf("Chose the comand");
+    printf("Chose the command ");
     scanf("%d", &command);
     getchar();
 
