@@ -32,19 +32,24 @@ void append_text() {
 
   if (!text) {
     text =(erow*)realloc(text, sizeof(erow));
-    text[0].size = 0;
+    text[0].size =0;
     text[0].chars = NULL;
     numrows++;
   }
 
   erow* current_row =&text[numrows -1];
   current_row->size +=strlen(buffer);
-  current_row->chars =(char*)realloc(current_row->chars, current_row->size +1);
+  current_row->chars = (char*)realloc(current_row->chars, current_row->size +1);
   strcat(current_row -> chars,buffer);
 }
 
 void start_new_line() {
-  printf("Todo\n");
+  text = (erow*)realloc(text, sizeof(erow)* (numrows +1));
+  text[numrows].size = 0;
+  text[numrows].chars = (char*)malloc(1); // виділення 1 біта памʼяті для '\n'
+  text[numrows].chars[0] = '\0';
+  numrows++;
+  printf("New line is started.\n");
 }
 
 void save() {
