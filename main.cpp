@@ -87,14 +87,31 @@ void Insert_at_certain_position() {
 }
 
 void search() {
-  printf("Todo");
+  printf("Enter text to search: ");
+  char buffer[1024];
+  fgets(buffer, 1024, stdin);
+  buffer[strcspn(buffer, "\n")] = '\0'; // Replace \n with \0
+
+  for (int i = 0; i < numrows; i++) {
+    char *pos = strstr(text[i].chars, buffer);
+    if (pos) {
+      int index = pos - text[i].chars;
+      printf("Found at the position  %d  %d: %s\n", i + 1, index + 1, text[i].chars);
+    }
+  }
 }
 
 void clear() {
-  printf("Todo");
+  for (int i =0; i <numrows; i++) {
+    free(text[i].chars);
+  }
+  free(text);
+  text = NULL;
+  numrows = 0;
+  printf("Console cleared\n");
 }
 
-int main( ) {
+int main() {
   int command = 0;
 
   while (true) {
