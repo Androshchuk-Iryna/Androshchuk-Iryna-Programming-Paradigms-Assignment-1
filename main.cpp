@@ -30,6 +30,13 @@ void append_text() {
     *newline_position = '\0';
   }
 
+  if (!text) {
+    text =(erow*)realloc(text, sizeof(erow));
+    text[0].size = 0;
+    text[0].chars = NULL;
+    numrows++;
+  }
+
   erow* current_row =&text[numrows -1];
   current_row->size +=strlen(buffer);
   current_row->chars =(char*)realloc(current_row->chars, current_row->size +1);
