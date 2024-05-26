@@ -1,4 +1,14 @@
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+typedef struct erow {
+  int size;
+  char* chars;
+} erow;
+
+erow* text =NULL;
+int numrows =0;
 
 void print_help() {
   printf("1 - Append text to the end \n");
@@ -12,7 +22,18 @@ void print_help() {
 }
 
 void append_text() {
-  printf("Todo\n");
+  printf("Enter text to append: ");
+  char buffer[1024];
+  fgets(buffer, 1024, stdin);
+  char *newline_position = strchr(buffer, '\n');
+  if (newline_position != NULL) {
+    *newline_position = '\0';
+  }
+
+  erow* current_row =&text[numrows -1];
+  current_row->size +=strlen(buffer);
+  current_row->chars =(char*)realloc(current_row->chars, current_row->size +1);
+  strcat(current_row -> chars,buffer);
 }
 
 void start_new_line() {
@@ -28,7 +49,9 @@ void load() {
 }
 
 void print_text() {
-  printf("Todo");
+  for (int i =0; i < numrows; i++) {
+    printf("%s\n", text[i].chars);
+  }
 }
 
 void Insert_at_certain_position() {
