@@ -76,7 +76,7 @@ void load() {
   printf("Enter filename to load: ");
   char filename[256];
   fgets(filename, 256, stdin);
-  filename[strcspn(filename, "\n")] = '\0'; // Remove newline character
+  filename[strcspn(filename, "\n")] = '\0';
 
   FILE* file = fopen(filename, "r");
   if (file == NULL) {
@@ -86,7 +86,7 @@ void load() {
 
   char buffer[1024];
   while (fgets(buffer, 1024, file) != NULL) {
-    buffer[strcspn(buffer, "\n")] = '\0'; // Remove newline character
+    buffer[strcspn(buffer, "\n")] = '\0';
     text = (erow*)realloc(text, sizeof(erow) * (numrows + 1));
     text[numrows].size = strlen(buffer);
     text[numrows].chars = (char*)malloc(text[numrows].size + 1);
@@ -147,7 +147,7 @@ void search() {
     char *pos = strstr(text[i].chars, buffer);
     if (pos) {
       int index = pos - text[i].chars;
-      printf("Found at the position  %d  %d: %s\n", i + 1, index + 1, text[i].chars);
+      printf("Found at the position %d %d: %s\n", i + 1, index + 1, text[i].chars);
     }
   }
 }
@@ -159,7 +159,7 @@ void clear() {
   free(text);
   text = NULL;
   numrows = 0;
-  printf("Console cleared\n");
+  printf("Console cleared \n");
 }
 
 int main() {
@@ -167,7 +167,7 @@ int main() {
 
   while (true) {
     printf(" If you need help print 0\n");
-    printf("Chose the command ");
+    printf("Chose the command: ");
     scanf("%d", &command);
     getchar();
 
@@ -200,7 +200,7 @@ int main() {
         print_help();
         break;
       default:
-        printf("Please, enter the command\n");
+        printf("Please, enter the valid command: \n");
         break;
     }
   }
