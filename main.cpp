@@ -73,7 +73,29 @@ void save() {
 }
 
 void load() {
-  printf("Todo");
+  printf("Enter filename to load: ");
+  char filename[256];
+  fgets(filename, 256, stdin);
+  filename[strcspn(filename, "\n")] = '\0'; // Remove newline character
+
+  FILE* file = fopen(filename, "r");
+  if (file == NULL) {
+    printf("Could not open file for reading.\n");
+    return;
+  }
+
+  char buffer[1024];
+  while (fgets(buffer, 1024, file) != NULL) {
+    buffer[strcspn(buffer, "\n")] = '\0'; // Remove newline character
+    text = (erow*)realloc(text, sizeof(erow) * (numrows + 1));
+    text[numrows].size = strlen(buffer);
+    text[numrows].chars = (char*)malloc(text[numrows].size + 1);
+    strcpy(text[numrows].chars, buffer);
+    numrows++;
+  }
+
+  fclose(file);
+  printf("Text loaded from %s.\n", filename);
 }
 
 void print_text() {
@@ -82,8 +104,37 @@ void print_text() {
   }
 }
 
-void Insert_at_certain_position() {
-  printf("Todo");
+void insert_at_certain_position() {
+  int line, pos;
+  printf("Enter line number: ");
+  scanf("%d", &line);
+  getchar();
+  if (line <= 0 || line > numrows) {
+    printf("Invalid line number.\n");
+    return;
+  }
+
+  printf("Enter position in line: ");
+  scanf("%d", &pos);
+  getchar();
+  if (pos < 0 || pos > text[line - 1].size) {
+    printf("Invalid position.\n");
+    return;
+  }
+
+  printf("Enter text to insert: ");
+  char buffer[1024];
+  fgets(buffer, 1024, stdin);
+  buffer[strcspn(buffer, "\n")] = '\0';
+
+  erow* curent_row = &text[line - 1];
+  int n_size =curent_row ->size + strlen(buffer);
+  curent_row ->chars = (char*)realloc(curent_row->chars, n_size + 1);
+  char *destination = curent_row->chars + pos-1;
+  size_t remaining_chars = curent_row->size - pos+1;
+  memmove(destination + strlen(buffer), destination, remaining_chars + 1);
+  memcpy(destination, buffer, strlen(buffer));
+  curent_row->size = n_size;
 }
 
 void search() {
@@ -137,7 +188,7 @@ int main() {
         print_text();
         break;
       case 6:
-        Insert_at_certain_position();
+        insert_at_certain_position();
         break;
       case 7:
         search();
