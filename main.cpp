@@ -2,13 +2,13 @@
 #include <string.h>
 #include <stdlib.h>
 
-typedef struct erow {
-  int size;
-  char* chars;
+typedef struct erow { // структура для зберігання рядків
+  int size; // довжина рядка
+  char* chars; // вказівник на символи рядка
 } erow;
 
-erow* text =NULL;
-int numrows =0;
+erow* text =NULL; // вказівник на рядки
+int numrows =0; // кількість рядків
 
 void print_help() {
   printf("1 - Append text to the end \n");
@@ -27,9 +27,9 @@ void append_text() {
   fgets(buffer, 1024, stdin);
   char *newline_position = strchr(buffer, '\n');
   if (newline_position != NULL) {
-    *newline_position = '\0';
+    *newline_position = '\0'; // заміна '\n' на '\0'
   }
-
+// перевірка на наявність рядків
   if (!text) {
     text =(erow*)realloc(text, sizeof(erow));
     text[0].size =0;
@@ -37,17 +37,17 @@ void append_text() {
     numrows++;
   }
 
-  erow* current_row =&text[numrows -1];
-  current_row->size +=strlen(buffer);
+  erow* current_row =&text[numrows -1]; // вказівник на поточний рядок
+  current_row->size +=strlen(buffer); // збільшення розміру рядка
   current_row->chars = (char*)realloc(current_row->chars, current_row->size +1);
   strcat(current_row -> chars,buffer);
 }
 
 void start_new_line() {
-  text = (erow*)realloc(text, sizeof(erow)* (numrows +1));
-  text[numrows].size = 0;
+  text = (erow*)realloc(text, sizeof(erow)* (numrows +1)); // виділення памʼяті для нового рядка
+  text[numrows].size = 0; // Iніціалізація нового рядка з нульовою довжиною
   text[numrows].chars = (char*)malloc(1); // виділення 1 біта памʼяті для '\n'
-  text[numrows].chars[0] = '\0';
+  text[numrows].chars[0] = '\0'; // встановлення '\0' в початок рядка
   numrows++;
   printf("New line is started.\n");
 }
@@ -56,7 +56,7 @@ void save() {
   printf("Enter file name to save:");
   char filename[256];
   fgets(filename, 256, stdin);
-  filename[strcspn(filename,"\n")] = '\0'; //replace \n with \0
+  filename[strcspn(filename,"\n")] = '\0'; // заміна '\n' на '\0'
 
   FILE* file;
   file =fopen (filename, "w");
@@ -86,11 +86,11 @@ void load() {
 
   char buffer[1024];
   while (fgets(buffer, 1024, file) != NULL) {
-    buffer[strcspn(buffer, "\n")] = '\0';
-    text = (erow*)realloc(text, sizeof(erow) * (numrows + 1));
+    buffer[strcspn(buffer, "\n")] = '\0'; //заміна '\n' на '\0'
+    text = (erow*)realloc(text, sizeof(erow) * (numrows + 1)); // виділення памʼяті для нового рядка
     text[numrows].size = strlen(buffer);
-    text[numrows].chars = (char*)malloc(text[numrows].size + 1);
-    strcpy(text[numrows].chars, buffer);
+    text[numrows].chars = (char*)malloc(text[numrows].size + 1); // виділення памʼяті для символів рядка
+    strcpy(text[numrows].chars, buffer); // копіювання з буфера до e
     numrows++;
   }
 
@@ -125,29 +125,29 @@ void insert_at_certain_position() {
   printf("Enter text to insert: ");
   char buffer[1024];
   fgets(buffer, 1024, stdin);
-  buffer[strcspn(buffer, "\n")] = '\0';
+  buffer[strcspn(buffer, "\n")] = '\0'; // заміна '\n' на '\0'
 
-  erow* curent_row = &text[line - 1];
-  int n_size =curent_row ->size + strlen(buffer);
-  curent_row ->chars = (char*)realloc(curent_row->chars, n_size + 1);
-  char *destination = curent_row->chars + pos-1;
-  size_t remaining_chars = curent_row->size - pos+1;
-  memmove(destination + strlen(buffer), destination, remaining_chars + 1);
-  memcpy(destination, buffer, strlen(buffer));
-  curent_row->size = n_size;
+  erow* curent_row = &text[line - 1]; // вказівник на поточний рядок
+  int n_size =curent_row ->size + strlen(buffer);   // обчислення нового розміру рядка
+  curent_row ->chars = (char*)realloc(curent_row->chars, n_size + 1); // виділення памʼяті для нового рядка
+  char *destination = curent_row->chars + pos-1;  // вказівник на позицію вставки
+  size_t remaining_chars = curent_row->size - pos+1;  // кількість символів, які залишились після позиції вставки
+  memmove(destination + strlen(buffer), destination, remaining_chars + 1);  // зсув символів вправо
+  memcpy(destination, buffer, strlen(buffer));  // копіювання текту у певне місце
+  curent_row->size = n_size; // оновлення розміру рядка
 }
 
 void search() {
   printf("Enter text to search: ");
   char buffer[1024];
   fgets(buffer, 1024, stdin);
-  buffer[strcspn(buffer, "\n")] = '\0'; // Replace \n with \0
+  buffer[strcspn(buffer, "\n")] = '\0'; // заміна '\n' на '\0'
 
   for (int i = 0; i < numrows; i++) {
-    char *pos = strstr(text[i].chars, buffer);
+    char *pos = strstr(text[i].chars, buffer); // пошук підрядка
     if (pos) {
-      int index = pos - text[i].chars;
-      printf("Found at the position %d %d: %s\n", i + 1, index + 1, text[i].chars);
+      int index = pos - text[i].chars; // обчислення позиції підрядка
+      printf("Found at the position %d %d: %s\n", i + 1, index + 1, text[i].chars); // виведення результату
     }
   }
 }
@@ -205,4 +205,3 @@ int main() {
     }
   }
 }
-
