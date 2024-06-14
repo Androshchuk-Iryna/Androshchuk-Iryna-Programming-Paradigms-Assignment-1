@@ -118,21 +118,53 @@ public:
         }
     }
     void insert_text() {
-        return;
-    }
+        int row, pos;
+        cout << "Enter row number: ";
+        cin >> row;
+        cout << "Enter position: ";
+        cin >> pos;
+        getchar();
+        if (row < 1 || row > numrows) {
+            cout << "Invalid row number\n";
+            return;
+        }
+        if (pos < 0 || pos > text[row - 1].size) {
+            cout << "Invalid position\n";
+            return;
+        }
+        cout << "Enter text to insert: ";
+        char buffer[1024];
+        cin.getline(buffer, 1024);
+        buffer[strcspn(buffer, "\n")] = '\0';
+
+        Erow* curent_row = &text[row - 1]; // вказівник на поточний рядок
+        int n_size =curent_row ->size + strlen(buffer);   // обчислення нового розміру рядка
+        curent_row ->chars = (char*)realloc(curent_row->chars, n_size + 1); // виділення памʼяті для нового рядка
+        char *destination = curent_row->chars + pos-1;  // вказівник на позицію вставки
+        size_t remaining_chars = curent_row->size - pos+1;  // кількість символів, які залишились після позиції вставки
+        memmove(destination + strlen(buffer), destination, remaining_chars + 1);  // зсув символів вправо
+        memcpy(destination, buffer, strlen(buffer));  // копіювання текту у певне місце
+        curent_row->size = n_size;
+        }
+
     void search_text() {
         cout << "Enter text to search: ";
         char buffer[1024];
         cin.getline(buffer, 1024);
+        buffer[strcspn(buffer, "\n")] = '\0';
 
+        bool found = false;
         for (int i = 0; i < numrows; i++) {
-            char* position = strstr(text[i].chars, buffer);
-            if (position != NULL) {
-                cout << "Text found at line " << i + 1 << " position " << position - text[i].chars + 1 << endl;
-                return;
+            char* pos = strstr(text[i].chars, buffer);
+            while (pos != NULL) {
+                cout << "Text found at line " << i + 1 << " position " << pos - text[i].chars + 1 << endl;
+                found = true;
+                pos = strstr(pos + 1, buffer);
             }
         }
-        cout << "Text not found\n";
+        if (!found) {
+            cout << "Text not found\n";
+        }
     }
     void clear_console() {
         for (int i = 0; i <numrows; i++) {
