@@ -3,4 +3,5 @@ project(Androshchuk_Iryna_Programming_Paradigms_Assignment)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(Androshchuk_Iryna_Programming_Paradigms_Assignment main.cpp)
+add_executable(Androshchuk_Iryna_Programming_Paradigms_Assignment main.cpp
+        assignment2.cpp)
