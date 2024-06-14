@@ -175,6 +175,55 @@ public:
         numrows = 0;
         cout << "Console cleared\n";
     }
+    void delet() {
+        int row, pos, len;
+        cout << "Enter row number: ";
+        cin >> row;
+        cout << "Enter position: ";
+        cin >> pos;
+        cout << "Enter length: ";
+        cin >> len;
+        getchar();
+        if (row < 1 || row > numrows) {
+            cout << "Invalid row number\n";
+            return;
+        }
+        if (pos < 0 || pos > text[row - 1].size) {
+            cout << "Invalid position\n";
+            return;
+        }
+        if (pos + len > text[row - 1].size) {
+            cout << "Invalid length\n";
+            return;
+        }
+        Erow* curent_row = &text[row - 1];
+        size_t remaining_chars = curent_row->size - pos - len + 1;
+        for (  int i = 0; i < remaining_chars; i++) {
+            curent_row->chars[pos + i -1] = curent_row->chars[pos + len + i -1];
+        }
+
+        curent_row->size -= len;
+        curent_row->chars = (char*)realloc(curent_row->chars, curent_row->size + 1);
+        curent_row->chars[curent_row->size] = '\0';
+    }
+    void undo() {
+        return;
+    }
+    void redo() {
+        return;
+    }
+    void cut() {
+        return;
+    }
+    void copy() {
+        return;
+    }
+    void paste() {
+        return;
+    }
+    void insert_with_replacment() {
+        return;
+    }
 };
 
 
@@ -215,6 +264,27 @@ int main() {
             break;
             case 0:
                 editor.print_help();
+            break;
+            case 9:
+                editor.delet();
+            break;
+            case 10:
+                editor.undo();
+            break;
+            case 11:
+                editor.redo();
+            break;
+            case 12:
+                editor.cut();
+            break;
+            case 13:
+                editor.copy();
+            break;
+            case 14:
+                editor.paste();
+            break;
+            case 15:
+                editor.insert_with_replacment();
             break;
             default:
                 cout << "Please, enter the valid command: \n";
