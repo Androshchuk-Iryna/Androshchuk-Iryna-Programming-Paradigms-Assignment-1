@@ -27,9 +27,8 @@ public:
         cout << "10 - undo \n";
         cout << "11 - redo \n";
         cout << "12 - cut \n";
-        cout << "13 - copy \n";
-        cout << "14 - paste \n";
-        cout << "15 - Insert with replacment \n";
+        cout << "13 - copy and paste \n";
+        cout << "14 - Insert with replacment \n";
 
     }
     void append_text() {
@@ -214,14 +213,100 @@ public:
         return;
     }
     void cut() {
-        return;
+        int row, pos, len;
+        cout << "Enter row number: ";
+        cin >> row;
+        if (row < 1 || row > numrows) {
+            cout << "Invalid row number\n";
+            return;
+        }
+        cout << "Enter position: ";
+        cin >> pos;
+        if (pos < 0 || pos > text[row - 1].size) {
+            cout << "Invalid position\n";
+            return;
+        }
+        cout << "Enter number of sibmols you whant to delete: ";
+        cin >> len;
+        getchar();
+        if (pos + len > text[row - 1].size) {
+            cout << "Invalid length\n";
+            return;
+        }
+        Erow* curent_row = &text[row - 1];
+        char* buffer = new char[len + 1];
+        memcpy(buffer, curent_row->chars + pos - 1, len);
+        buffer[len] = '\0';
+
+        size_t remaining_chars = curent_row->size - pos - len + 1;
+        for (int i = 0; i < remaining_chars; i++) {
+            curent_row->chars[pos + i - 1] = curent_row->chars[pos + len + i - 1];
+        }
+
+        curent_row->size -= len;
+        curent_row->chars = (char*)realloc(curent_row->chars, curent_row->size + 1);
+        curent_row->chars[curent_row->size] = '\0';
+
+        delete[] buffer;
     }
-    void copy() {
-        return;
+    char* copy() {
+        int row, pos, len;
+        cout << "Enter row number: ";
+        cin >> row;
+        if (row < 1 || row > numrows) {
+            cout << "Invalid row number\n";
+            return nullptr;
+        }
+        cout << "Enter position: ";
+        cin >> pos;
+        if (pos < 0 || pos > text[row - 1].size) {
+            cout << "Invalid position\n";
+            return nullptr;
+        }
+        cout << "Enter number of sibmols you whant to copy: ";
+        cin >> len;
+        getchar();
+        if (pos + len > text[row - 1].size) {
+            cout << "Invalid length\n";
+            return nullptr;
+        }
+        Erow* curent_row = &text[row - 1];
+        char* buffer = new char[len + 1];
+        memcpy(buffer, curent_row->chars + pos - 1, len); // копіювання тексту
+        buffer[len] = '\0';
+        cout << "Copied text: " << buffer << endl;
+        return buffer;
     }
-    void paste() {
-        return;
+    void paste(char* text_a) {
+        if (text_a == nullptr) {
+            cout << "Nothing to paste\n";
+            return;
+        }
+        int row, pos;
+        cout << "Enter row number: ";
+        cin >> row;
+        if (row < 1 || row > numrows) {
+            cout << "Invalid row number\n";
+            return;
+        }
+        cout << "Enter position: ";
+        cin >> pos;
+        if (pos < 0 || pos > text[row - 1].size) {
+            cout << "Invalid position\n";
+            return;
+        }
+        Erow* curent_row = &text[row - 1];
+        int n_size = curent_row->size + strlen(text_a);
+        curent_row->chars = (char*)realloc(curent_row->chars, n_size + 1);
+        char* destination = curent_row->chars + pos - 1;
+        size_t remaining_chars = curent_row->size - pos + 1;
+        memmove(destination + strlen(text_a), destination, remaining_chars + 1);
+        memcpy(destination, text_a, strlen(text_a));
+        curent_row->size = n_size;
+        curent_row->chars[curent_row->size] = '\0';
+        delete[] text_a;
     }
+
     void insert_with_replacment() {
         int row, pos;
         cout << "Enter line number: ";
@@ -314,13 +399,12 @@ int main() {
             case 12:
                 editor.cut();
             break;
-            case 13:
-                editor.copy();
+            case 13: {
+                char* copied_text = editor.copy();
+                editor.paste(copied_text);
+            }
             break;
             case 14:
-                editor.paste();
-            break;
-            case 15:
                 editor.insert_with_replacment();
             break;
             default:
