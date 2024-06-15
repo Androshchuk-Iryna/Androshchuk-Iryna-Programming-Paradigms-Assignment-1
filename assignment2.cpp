@@ -139,6 +139,7 @@ public:
 
         Erow* curent_row = &text[row - 1]; // вказівник на поточний рядок
         int n_size =curent_row ->size + strlen(buffer);   // обчислення нового розміру рядка
+
         curent_row ->chars = (char*)realloc(curent_row->chars, n_size + 1); // виділення памʼяті для нового рядка
         char *destination = curent_row->chars + pos-1;  // вказівник на позицію вставки
         size_t remaining_chars = curent_row->size - pos+1;  // кількість символів, які залишились після позиції вставки
@@ -179,19 +180,19 @@ public:
         int row, pos, len;
         cout << "Enter row number: ";
         cin >> row;
-        cout << "Enter position: ";
-        cin >> pos;
-        cout << "Enter length: ";
-        cin >> len;
-        getchar();
         if (row < 1 || row > numrows) {
             cout << "Invalid row number\n";
             return;
         }
+        cout << "Enter position: ";
+        cin >> pos;
         if (pos < 0 || pos > text[row - 1].size) {
             cout << "Invalid position\n";
             return;
         }
+        cout << "Enter length: ";
+        cin >> len;
+        getchar();
         if (pos + len > text[row - 1].size) {
             cout << "Invalid length\n";
             return;
@@ -222,7 +223,43 @@ public:
         return;
     }
     void insert_with_replacment() {
-        return;
+        int row, pos;
+        cout << "Enter line number: ";
+        cin >> row;
+        if (row < 1 || row > numrows) {
+            cout << "Invalid row number\n";
+            return;
+        }
+        cout << "Enter index: ";
+        cin >> pos;
+        getchar();
+        if (pos < 0 || pos > text[row - 1].size) {
+            cout << "Invalid position\n";
+            return;
+        }
+        cout << "Enter text to insert: ";
+        char buffer[1024];
+        cin.getline(buffer, 1024);
+        buffer[strcspn(buffer, "\n")] = '\0';
+
+        Erow* current_row = &text[row - 1]; // вказівник на поточний рядок
+        int buffer_len = strlen(buffer);// довжина тексту для вставки
+
+        int new_size = pos - 1 + buffer_len + (current_row->size - pos);
+        char* new_chars = new char[new_size + 1];
+        memcpy(new_chars, current_row->chars, pos - 1); // копіювання тексту до позиції вставки
+        memcpy(new_chars + pos - 1, buffer, buffer_len); // копіювання тексту для вставки
+        // копіювання тексту після позиції вставки
+        if (pos - 1 + buffer_len < current_row->size) {
+            memcpy(new_chars + pos - 1 + buffer_len, current_row->chars + pos - 1 + buffer_len, current_row->size - pos + 1);
+        }
+
+        new_chars[new_size] = '\0';
+
+        delete[] current_row->chars;
+        current_row->chars = new_chars;
+        current_row->size = new_size;
+
     }
 };
 
