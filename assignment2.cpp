@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
+#include <stack>
 using namespace std;
 
 struct Erow { // структура для зберігання рядків
@@ -12,6 +13,7 @@ struct Erow { // структура для зберігання рядків
 class Editor {
     Erow* text = nullptr; // вказівник на рядки
     int numrows = 0; // кількість рядків
+    char *copied_text = nullptr;
 
 public:
     void print_help() {
@@ -162,7 +164,7 @@ public:
                 pos = strstr(pos + 1, buffer);
             }
         }
-        if (!found) {
+        if (found != NULL) {
             cout << "Text not found\n";
         }
     }
@@ -233,52 +235,67 @@ public:
             cout << "Invalid length\n";
             return;
         }
+
+        if (copied_text != nullptr) {
+            delete[] copied_text;
+        }
+        copied_text = new char[len + 1];
+        strncpy(copied_text, text[row - 1].chars + pos, len);
+        copied_text[len] = '\0';
+
         Erow* curent_row = &text[row - 1];
         char* buffer = new char[len + 1];
-        memcpy(buffer, curent_row->chars + pos - 1, len);
+        memcpy(buffer, curent_row->chars + pos - 1, len); // копіювання тексту
         buffer[len] = '\0';
 
-        size_t remaining_chars = curent_row->size - pos - len + 1;
-        for (int i = 0; i < remaining_chars; i++) {
+        size_t remaining_chars = curent_row->size - pos - len + 1;// кількість символів, які залишились після видалення
+        for (int i = 0; i < remaining_chars; i++) { // зсув символів вліво
             curent_row->chars[pos + i - 1] = curent_row->chars[pos + len + i - 1];
         }
 
-        curent_row->size -= len;
+        curent_row->size -= len; // оновлення розміру рядка
         curent_row->chars = (char*)realloc(curent_row->chars, curent_row->size + 1);
         curent_row->chars[curent_row->size] = '\0';
 
-        delete[] buffer;
+        cout << "Text cut: " << copied_text << endl;
     }
-    char* copy() {
+    void copy() {
         int row, pos, len;
         cout << "Enter row number: ";
         cin >> row;
         if (row < 1 || row > numrows) {
             cout << "Invalid row number\n";
-            return nullptr;
+            return;
         }
         cout << "Enter position: ";
         cin >> pos;
         if (pos < 0 || pos > text[row - 1].size) {
             cout << "Invalid position\n";
-            return nullptr;
+            return;
         }
         cout << "Enter number of sibmols you whant to copy: ";
         cin >> len;
         getchar();
         if (pos + len > text[row - 1].size) {
             cout << "Invalid length\n";
-            return nullptr;
+            return;
         }
         Erow* curent_row = &text[row - 1];
         char* buffer = new char[len + 1];
         memcpy(buffer, curent_row->chars + pos - 1, len); // копіювання тексту
         buffer[len] = '\0';
-        cout << "Copied text: " << buffer << endl;
-        return buffer;
+
+        if (copied_text != nullptr) {
+            delete[] copied_text;
+        } // звільняємо пам'ять, виділену раніше
+        copied_text = new char[len + 1];
+        strncpy(copied_text, text[row - 1].chars + pos, len);
+        copied_text[len] = '\0';
+
+        cout << "Text copied: " << copied_text << endl;
     }
-    void paste(char* text_a) {
-        if (text_a == nullptr) {
+    void paste( ) {
+        if (copied_text == nullptr){
             cout << "Nothing to paste\n";
             return;
         }
@@ -296,15 +313,15 @@ public:
             return;
         }
         Erow* curent_row = &text[row - 1];
-        int n_size = curent_row->size + strlen(text_a);
+        int n_size = curent_row->size + strlen(copied_text);
         curent_row->chars = (char*)realloc(curent_row->chars, n_size + 1);
         char* destination = curent_row->chars + pos - 1;
         size_t remaining_chars = curent_row->size - pos + 1;
-        memmove(destination + strlen(text_a), destination, remaining_chars + 1);
-        memcpy(destination, text_a, strlen(text_a));
+        memmove(destination + strlen(copied_text), destination, remaining_chars + 1);
+        memcpy(destination, copied_text, strlen(copied_text));
         curent_row->size = n_size;
         curent_row->chars[curent_row->size] = '\0';
-        delete[] text_a;
+        delete[] copied_text;
     }
 
     void insert_with_replacment() {
@@ -347,7 +364,6 @@ public:
 
     }
 };
-
 
 int main() {
     Editor editor;
@@ -399,12 +415,13 @@ int main() {
             case 12:
                 editor.cut();
             break;
-            case 13: {
-                char* copied_text = editor.copy();
-                editor.paste(copied_text);
-            }
+            case 13:
+                editor.copy();
             break;
             case 14:
+                editor.paste();
+            break;
+            case 15:
                 editor.insert_with_replacment();
             break;
             default:
